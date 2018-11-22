@@ -1,0 +1,16 @@
+{
+    "name": "sickdaflip/magento_amazon_payments",
+    "license": "GPLv3",
+    "type": "magento-module",
+    "description": "Magento Amazon Payments Module 2.0.22",
+    "authors": [
+        {
+            "name": "SickDaFlip",
+            "email": "philippbreitsprecher@gmail.com"
+        }
+    ],
+    "require": {
+        "magento-hackathon/magento-composer-installer": "*"
+    }
+}
+
