@@ -186,7 +186,6 @@ class Creativestyle_AmazonPayments_Block_Js extends Creativestyle_AmazonPayments
             'saveShippingMethod' => $this->getUrl('amazonpayments/checkout/saveShippingMethod'),
             'saveOrder' => $this->getUrl('amazonpayments/checkout/saveOrder'),
             'saveCoupon' => $this->getUrl('amazonpayments/checkout/couponPost'),
-            'clearOrderReference' => $this->getUrl('amazonpayments/checkout/clearOrderReference'),
             'cancelOrderReference' => $this->getUrl('amazonpayments/checkout/cancelOrderReference'),
             'failure' => $this->getUrl('checkout/cart')
         );

@@ -130,6 +130,7 @@ class Creativestyle_AmazonPayments_Controller_Checkout extends Creativestyle_Ama
      * and in session data and return its value
      *
      * @throws Varien_Exception
+     * @deprecated
      */
     protected function _clearOrderReferenceId()
     {
@@ -148,21 +149,27 @@ class Creativestyle_AmazonPayments_Controller_Checkout extends Creativestyle_Ama
     {
         if ($this->_orderReferenceId) {
             $this->_getApi()->cancelOrderReference(null, $this->_orderReferenceId);
-            $this->_clearOrderReferenceId();
         }
     }
 
     /**
      * Send Ajax redirect response
      *
+     * @param string|null $debug
      * @return $this
      */
-    protected function _ajaxRedirectResponse()
+    protected function _ajaxRedirectResponse($debug = null)
     {
-        $this->getResponse()
+        /** @var Mage_Core_Controller_Response_Http $response */
+        $response = $this->getResponse()
             ->setHeader('HTTP/1.1', '403 Session Expired')
-            ->setHeader('Login-Required', 'true')
-            ->sendResponse();
+            ->setHeader('Login-Required', 'true');
+
+        if ($debug) {
+            $response->setHeader('X-Amazon-Pay-Debug', $debug);
+        }
+
+        $response->sendResponse();
         return $this;
     }
 
@@ -175,17 +182,17 @@ class Creativestyle_AmazonPayments_Controller_Checkout extends Creativestyle_Ama
     protected function _expireAjax()
     {
         if (!$this->_getQuote()->hasItems() || $this->_getQuote()->getHasError()) {
-            $this->_ajaxRedirectResponse();
+            $this->_ajaxRedirectResponse('Cart is invalid or has no items');
             return true;
         }
 
         if ($this->_getCheckoutSession()->getCartWasUpdated(true)) {
-            $this->_ajaxRedirectResponse();
+            $this->_ajaxRedirectResponse('Cart was updated');
             return true;
         }
 
         if (null === $this->_getOrderReferenceId()) {
-            $this->_ajaxRedirectResponse();
+            $this->_ajaxRedirectResponse('Order reference ID is missing');
             return true;
         }
 
@@ -198,16 +205,10 @@ class Creativestyle_AmazonPayments_Controller_Checkout extends Creativestyle_Ama
     public function preDispatch()
     {
         parent::preDispatch();
-        $this->_orderReferenceId = $this->getRequest()->getParam(
-            'orderReferenceId',
-            $this->_getCheckoutSession()->getData('amazon_order_reference_id')
-        );
-        $this->_accessToken = $this->getRequest()->getParam(
-            'accessToken',
-            $this->_getCheckoutSession()->getData('amazon_access_token')
-        );
-        $this->_getCheckoutSession()->setData('amazon_order_reference_id', $this->_orderReferenceId);
-        $this->_getCheckoutSession()->setData('amazon_access_token', $this->_accessToken);
+        $this->_orderReferenceId = $this->getRequest()->getParam('orderReferenceId', null);
+        $this->_accessToken = $this->getRequest()->getParam('accessToken', null);
+//        Mage::register('amazon_pay_order_reference_id', $this->_orderReferenceId);
+//        Mage::register('amazon_login_access_token', $this->_accessToken);
     }
 
     /**

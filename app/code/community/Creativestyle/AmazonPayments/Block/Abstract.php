@@ -258,16 +258,6 @@ abstract class Creativestyle_AmazonPayments_Block_Abstract extends Mage_Core_Blo
     }
 
     /**
-     * Returns order reference ID saved in session data
-     *
-     * @return string|null
-     */
-    public function getOrderReferenceId()
-    {
-        return $this->_getCheckoutSession()->getAmazonOrderReferenceId();
-    }
-
-    /**
      * Returns display language
      *
      * @return null|string

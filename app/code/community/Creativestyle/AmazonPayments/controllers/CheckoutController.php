@@ -112,6 +112,8 @@ class Creativestyle_AmazonPayments_CheckoutController extends Creativestyle_Amaz
 
             $this->loadLayout();
             $this->getLayout()->getBlock('head')->setTitle($this->__('Amazon Pay'));
+            $this->getLayout()->getBlock('amazonpayments.js')->setOrderReferenceId($this->_getOrderReferenceId());
+            $this->getLayout()->getBlock('amazonpayments.js')->setAccessToken($this->_getAccessToken());
             $this->renderLayout();
         } catch (Exception $e) {
             Creativestyle_AmazonPayments_Model_Logger::logException($e);
@@ -340,16 +342,6 @@ class Creativestyle_AmazonPayments_CheckoutController extends Creativestyle_Amaz
             if ($e->getState()
                 == Creativestyle_AmazonPayments_Model_Processor_Transaction::TRANSACTION_STATE_DECLINED) {
                 if ($e->getReasonCode()
-                    == Creativestyle_AmazonPayments_Model_Processor_Transaction::TRANSACTION_REASON_AMAZON_REJECTED) {
-                    $this->_clearOrderReferenceId();
-                }
-            }
-        }
-
-        if ($e->getType() == Creativestyle_AmazonPayments_Model_Processor_Transaction::TRANSACTION_TYPE_AUTH) {
-            if ($e->getState()
-                == Creativestyle_AmazonPayments_Model_Processor_Transaction::TRANSACTION_STATE_DECLINED) {
-                if ($e->getReasonCode()
                     == Creativestyle_AmazonPayments_Model_Processor_Transaction::TRANSACTION_REASON_TIMEOUT) {
                     $this->_cancelOrderReferenceId();
                 }
@@ -471,6 +463,7 @@ class Creativestyle_AmazonPayments_CheckoutController extends Creativestyle_Amaz
 
     /**
      * @throws Varien_Exception
+     * @deprecated
      */
     public function clearOrderReferenceAction()
     {

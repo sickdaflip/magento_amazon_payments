@@ -122,7 +122,7 @@ class Creativestyle_AmazonPayments_Model_Api_Ipn
 
         /** @var Creativestyle_AmazonPayments_Model_Payment_Abstract $methodInstance */
         $methodInstance = $payment->getMethodInstance();
-        $methodInstance->importTransactionDetails($payment, $transaction, new Varien_Object(), $transactionDetails);
+        $methodInstance->importTransactionDetails($payment, $transaction, new Varien_Object());
 
         $payment->getOrder()
             ->addRelatedObject($transaction)

@@ -86,6 +86,22 @@ class AmazonPay_HttpCurl implements AmazonPay_HttpCurlInterface
         curl_setopt($ch, CURLOPT_HEADER, false);
         
         $response = $this->execute($ch);
+
+        $queryArray = array();
+        parse_str($parameters, $queryArray);
+
+        Mage::dispatchEvent('amazonpayments_advanced_api_post_call', array(
+            'call_data' => array(
+                'call_url' => $url,
+                'call_action' => isset($queryArray['Action']) ? $queryArray['Action'] : null,
+                'query' => $parameters,
+                'response_code' => (int)curl_getinfo($ch, CURLINFO_HTTP_CODE),
+                'response_error' => null,
+                'response_headers' => null,
+                'response_body' => $response
+            )
+        ));
+
         return $response;
     }
 

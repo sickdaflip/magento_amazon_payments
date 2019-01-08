@@ -100,38 +100,25 @@ class Creativestyle_AmazonPayments_Model_Checkout extends Mage_Checkout_Model_Ty
         $data = $this->_sanitizeShippingAddress($data);
 
         unset($data['address_id']);
-        $address = $this->getQuote()->getBillingAddress();
+        $address = $this->getQuote()->getShippingAddress();
         $address->setCustomerAddressId(null);
 
         $address->addData($data)->setSaveInAddressBook(0);
         $address->implodeStreetAddress();
 
-        $this->getCheckout()->setStepData('billing', 'complete', true);
-
-        if (!$this->getQuote()->isVirtual()) {
-            $billing = clone $address;
-            $billing->unsAddressId()->unsAddressType();
-            $shipping = $this->getQuote()->getShippingAddress();
-            $shippingMethod = $shipping->getShippingMethod();
-            $shipping->addData($billing->getData())
-                ->setSameAsBilling(1)
-                ->setSaveInAddressBook(0)
-                ->setShippingMethod($shippingMethod)
-                ->setCollectShippingRates(true);
-            $this->getCheckout()->setStepData('shipping', 'complete', true);
-        }
-
         $this->_setCartCouponCode();
+
+        // shipping totals may be affected by payment method
+        if (!$this->getQuote()->isVirtual() && $this->getQuote()->getShippingAddress()) {
+            $this->getQuote()->getShippingAddress()->setCollectShippingRates(true);
+        }
 
         $this->getQuote()->collectTotals();
         $this->getQuote()->save();
 
-        if (!$this->getQuote()->isVirtual() && $this->getCheckout()->getStepData('shipping', 'complete') == true) {
-            // recollect shipping rates for shipping methods
-            $this->getQuote()->getShippingAddress()->setCollectShippingRates(true);
-        }
-
-        $this->getCheckout()->setStepData('shipping_method', 'allow', true);
+        $this->getCheckout()
+            ->setStepData('shipping', 'complete', true)
+            ->setStepData('shipping_method', 'allow', true);
 
         return array();
     }

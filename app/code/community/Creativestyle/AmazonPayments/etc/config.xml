@@ -19,7 +19,7 @@
 <config>
     <modules>
         <Creativestyle_AmazonPayments>
-            <version>2.0.22</version>
+            <version>2.0.26</version>
         </Creativestyle_AmazonPayments>
     </modules>
     <global>

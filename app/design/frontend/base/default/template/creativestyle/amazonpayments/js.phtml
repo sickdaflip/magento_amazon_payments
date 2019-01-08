@@ -40,8 +40,12 @@
             .renderButtons()
 <?php if ($this->getIsCheckout()) : ?>
 <?php $orderReferenceId = $this->getOrderReferenceId(); ?>
+<?php $accessToken = $this->getAccessToken(); ?>
 <?php if ($orderReferenceId) : ?>
             .setOrderReferenceId('<?php echo $orderReferenceId; ?>')
+<?php endif; ?>
+<?php if ($accessToken) : ?>
+            .setAccessToken('<?php echo $accessToken; ?>')
 <?php endif; ?>
             .initCheckout({
                 responsive: true,
